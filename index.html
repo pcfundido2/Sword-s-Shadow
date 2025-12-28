@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sword's Shadow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+            color: #fff;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(100, 100, 100, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(100, 100, 100, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        /* Menu Principal */
+        #mainMenu {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            z-index: 10;
+        }
+        
+        .game-title {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            color: #fff;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.7),
+                0 0 20px rgba(255, 255, 255, 0.5),
+                0 0 30px rgba(255, 255, 255, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.7),
+                    0 0 20px rgba(255, 255, 255, 0.5),
+                    0 0 30px rgba(255, 255, 255, 0.3);
+            }
+            to {
+                text-shadow: 
+                    0 0 15px rgba(255, 255, 255, 0.8),
+                    0 0 25px rgba(255, 255, 255, 0.6),
+                    0 0 35px rgba(255, 255, 255, 0.4),
+                    0 0 45px rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+        }
+        
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 40px 0;
+            align-items: center;
+        }
+        
+        .menu-button {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #888;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            width: 300px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-button:active {
+            transform: translateY(0);
+        }
+        
+        .menu-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%);
+        }
+        
+        .footer-text {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+        
+        .heart {
+            color: #ff4444;
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Tela do Tutorial */
+        #tutorialScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .screen-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid #888;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .screen-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .control-item {
+            background: rgba(50, 50, 50, 0.5);
+            padding: 20px;
+            border-left: 3px solid #888;
+        }
+        
+        .control-title {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .key {
+            display: inline-block;
+            background: #333;
+            padding: 5px 15px;
+            border: 1px solid #888;
+            border-radius: 3px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .control-description {
+            color: #aaa;
+            line-height: 1.5;
+        }
+        
+        .gameplay-tip {
+            background: rgba(100, 100, 100, 0.2);
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 3px solid #fff;
+        }
+        
+        .tip-title {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .back-button {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #888;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 30px;
+            display: block;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+        }
+        
+        /* Tela de Créditos */
+        #creditsScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            padding: 40px;
+        }
+        
+        .credits-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid #888;
+            padding: 50px;
+        }
+        
+        .credits-title {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+        
+        .credit-item {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(50, 50, 50, 0.3);
+        }
+        
+        .credit-name {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .credit-alias {
+            font-size: 1.4rem;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .credit-year {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .special-credits {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+        
+        .special-text {
+            color: #aaa;
+            font-size: 1rem;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .sponsor {
+            color: #ff6600;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+        
+        /* Tela de História */
+        #storyScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            padding: 40px;
+        }
+        
+        .story-content {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid #888;
+            padding: 50px;
+            text-align: center;
+        }
+        
+        .coming-soon {
+            font-size: 3rem;
+            color: #888;
+            margin: 100px 0;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Container do Jogo */
+        #gameContainer {
+            display: none;
+            position: relative;
+            margin: 20px auto;
+        }
+        
+        #gameCanvas {
+            display: block;
+            border: 2px solid #fff;
+            background-color: #111;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* UI do Jogo */
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        
+        #healthBar {
+            width: 200px;
+            height: 10px;
+            background-color: #333;
+            margin-bottom: 5px;
+            border: 1px solid #fff;
+        }
+        
+        #healthFill {
+            height: 100%;
+            width: 100%;
+            background-color: #fff;
+            transition: width 0.3s;
+        }
+        
+        #expBar {
+            width: 200px;
+            height: 10px;
+            background-color: #333;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+        
+        #expFill {
+            height: 100%;
+            width: 0%;
+            background-color: #888;
+            transition: width 0.3s;
+        }
+        
+        #stats {
+            margin-top: 10px;
+            line-height: 1.4;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border: 1px solid #444;
+        }
+        
+        /* Screens do Jogo */
+        #upgradeScreen, #gameOverScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 2px solid #fff;
+            padding: 20px;
+            z-index: 100;
+            display: none;
+            color: #fff;
+            width: 400px;
+            text-align: center;
+        }
+        
+        .upgradeOption {
+            background-color: #222;
+            border: 1px solid #888;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upgradeOption:hover {
+            background-color: #444;
+            border-color: #fff;
+        }
+        
+        /* Botão de Voltar ao Menu no Jogo */
+        #backToMenu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: 1px solid #888;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        #backToMenu:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+        }
+        
+        /* Partículas de Fundo do Menu */
+        #menuParticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Controles de Áudio */
+        .audio-controls {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        #musicToggle {
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #volumeSlider {
+            width: 150px;
+        }
+        
+        /* Elemento da espada PNG */
+        #swordImage {
+            display: none; /* Escondido, será usado via canvas */
+        }
+    </style>
+</head>
+<body>
+    <!-- Elemento de áudio para música do menu -->
+    <audio id="menuMusic" loop>
+        <source src="ester garcia-botão laranja.mp3" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+    
+    <!-- Elemento de áudio para música do jogo -->
+    <audio id="gameMusic" loop>
+        <!-- Música do jogo será configurada via JavaScript -->
+    </audio>
+    
+    <!-- Imagem da espada (carregada mas escondida) -->
+    <img id="swordImage" src="espada.png" alt="Espada" style="display: none;">
+    
+    <!-- Menu Principal -->
+    <div id="mainMenu">
+        <h1 class="game-title">SWORD'S SHADOW</h1>
+        <p class="subtitle">A MONOCHROME SURVIVAL ODYSSEY</p>
+        
+        <div class="menu-options">
+            <button class="menu-button" id="playButton">JOGAR</button>
+            <button class="menu-button" id="tutorialButton">TUTORIAL</button>
+            <button class="menu-button" id="storyButton">HISTÓRIA</button>
+            <button class="menu-button" id="creditsButton">CRÉDITOS</button>
+        </div>
+        
+        <!-- Controles de Áudio no Menu -->
+        <div class="audio-controls">
+            <button id="musicToggle">🔊 Música: ON</button>
+            <input type="range" id="volumeSlider" min="0" max="100" value="30">
+        </div>
+    </div>
+    
+    <!-- Tela do Tutorial -->
+    <div id="tutorialScreen">
+        <div class="screen-content">
+            <h2 class="screen-title">CONTROLES DO JOGO</h2>
+            
+            <div class="controls-grid">
+                <div class="control-item">
+                    <h3 class="control-title">
+                        <span class="key">W</span>
+                        <span class="key">A</span>
+                        <span class="key">S</span>
+                        <span class="key">D</span>
+                    </h3>
+                    <p class="control-description">Movimente seu personagem pela arena</p>
+                </div>
+                
+                <div class="control-item">
+                    <h3 class="control-title">
+                        <span class="key">SETAS</span>
+                    </h3>
+                    <p class="control-description">Alternativa para movimentação</p>
+                </div>
+                
+                <div class="control-item">
+                    <h3 class="control-title">
+                        <span class="key">MOUSE</span>
+                    </h3>
+                    <p class="control-description">Direciona a espada para atacar</p>
+                </div>
+                
+                <div class="control-item">
+                    <h3 class="control-title">
+                        <span class="key">ESPAÇO</span>
+                    </h3>
+                    <p class="control-description">Atalho para selecionar upgrade</p>
+                </div>
+            </div>
+            
+            <div class="gameplay-tip">
+                <h4 class="tip-title">🎯 DICAS DE SOBREVIVÊNCIA</h4>
+                <p class="control-description">
+                    1. A espada segue a direção do mouse - aponte para onde quer atacar<br>
+                    2. Mate inimigos para coletar XP e subir de nível<br>
+                    3. Escolha upgrades sabiamente para sobreviver mais tempo<br>
+                    4. Esqueletos aliados podem ajudar no combate<br>
+                    5. O jogo fica mais difícil com o passar do tempo
+                </p>
+            </div>
+            
+            <button class="back-button" id="backFromTutorial">VOLTAR AO MENU</button>
+        </div>
+    </div>
+    
+    <!-- Tela de Créditos Atualizada -->
+    <div id="creditsScreen">
+        <div class="credits-content">
+            <h2 class="credits-title">CRÉDITOS</h2>
+            
+            <div class="credit-item">
+                <div class="credit-name">EDUARDO JOSE GUARESCHI</div>
+                <div class="credit-alias">O FAMOSO PCFUNDIDO</div>
+            </div>
+            
+            <div class="special-credits">
+                <p class="special-text">Música menu inicial feita por Ester Garcia</p>
+                <p class="special-text">Feito para um evento natalino do Error</p>
+                <p class="sponsor">PATROCINADO POR SOCIALMEDIA</p>
+            </div>
+            
+            <div class="credit-year">2025</div>
+            
+            <button class="back-button" id="backFromCredits">VOLTAR AO MENU</button>
+        </div>
+    </div>
+    
+    <!-- Tela de História -->
+    <div id="storyScreen">
+        <div class="story-content">
+            <h2 class="screen-title">A HISTÓRIA</h2>
+            <div class="coming-soon">EM BREVE</div>
+            <button class="back-button" id="backFromStory">VOLTAR AO MENU</button>
+        </div>
+    </div>
+    
+    <!-- Container do Jogo -->
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <button id="backToMenu">VOLTAR AO MENU</button>
+        
+        <div id="ui">
+            <div id="healthBar">
+                <div id="healthFill"></div>
+            </div>
+            <div id="expBar">
+                <div id="expFill"></div>
+            </div>
+            <div id="stats">
+                <div>Nível: <span id="level">1</span></div>
+                <div>Vida: <span id="healthText">100/100</span></div>
+                <div>XP: <span id="xp">0</span></div>
+                <div>Esqueletos: <span id="skeletons">0</span></div>
+                <div>Inimigos Mortos: <span id="kills">0</span></div>
+                <div>Tempo: <span id="time">0</span>s</div>
+            </div>
+        </div>
+        
+        <div id="upgradeScreen">
+            <h2>ESCOLHA UM UPGRADE</h2>
+            <div id="upgradeOptions"></div>
+        </div>
+        
+        <div id="gameOverScreen">
+            <h2>FIM DE JOGO</h2>
+            <p>Você sobreviveu por <span id="finalTime">0</span> segundos</p>
+            <p>Inimigos mortos: <span id="finalKills">0</span></p>
+            <p>Nível alcançado: <span id="finalLevel">1</span></p>
+            <button id="restartButton">JOGAR NOVAMENTE</button>
+            <button id="menuButton">VOLTAR AO MENU</button>
+        </div>
+    </div>
+    
+    <!-- Rodapé -->
+    <div class="footer-text">
+        EM HOMENAGEM A STYLES <span class="heart">♥</span>
+    </div>
+    
+    <!-- Canvas para partículas do menu -->
+    <canvas id="menuParticles"></canvas>
+
+    <script>
+        // ============================================
+        // SISTEMA DE ÁUDIO
+        // ============================================
+        
+        let musicEnabled = true;
+        let volume = 0.3;
+        const menuMusic = document.getElementById('menuMusic');
+        const gameMusic = document.getElementById('gameMusic');
+        
+        // Configurar música inicial
+        menuMusic.volume = volume;
+        menuMusic.loop = true;
+        
+        // Tentar tocar música do menu quando a página carregar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (musicEnabled) {
+                    menuMusic.play().catch(e => {
+                        console.log("Autoplay do menu bloqueado - precisa de interação");
+                    });
+                }
+            }, 1000);
+        });
+        
+        // Controle de toggle de música
+        document.getElementById('musicToggle').addEventListener('click', () => {
+            musicEnabled = !musicEnabled;
+            const button = document.getElementById('musicToggle');
+            button.textContent = musicEnabled ? '🔊 Música: ON' : '🔇 Música: OFF';
+            
+            if (musicEnabled) {
+                menuMusic.volume = volume;
+                menuMusic.play().catch(e => console.log("Precisa de interação"));
+                gameMusic.volume = volume;
+                gameMusic.play().catch(e => console.log("Precisa de interação"));
+            } else {
+                menuMusic.pause();
+                gameMusic.pause();
+            }
+        });
+        
+        // Controle de volume
+        document.getElementById('volumeSlider').addEventListener('input', (e) => {
+            volume = e.target.value / 100;
+            if (musicEnabled) {
+                menuMusic.volume = volume;
+                gameMusic.volume = volume;
+            }
+        });
+        
+        // ============================================
+        // SISTEMA DE MENU
+        // ============================================
+        
+        const mainMenu = document.getElementById('mainMenu');
+        const tutorialScreen = document.getElementById('tutorialScreen');
+        const creditsScreen = document.getElementById('creditsScreen');
+        const storyScreen = document.getElementById('storyScreen');
+        const gameContainer = document.getElementById('gameContainer');
+        
+        // Botões do menu principal
+        document.getElementById('playButton').addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            gameContainer.style.display = 'block';
+            
+            // Trocar música do menu para música do jogo
+            menuMusic.pause();
+            if (musicEnabled) {
+                gameMusic.volume = volume;
+                gameMusic.play().catch(e => console.log("Precisa de interação"));
+            }
+            
+            initGame();
+        });
+        
+        document.getElementById('tutorialButton').addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            tutorialScreen.style.display = 'block';
+        });
+        
+        document.getElementById('creditsButton').addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            creditsScreen.style.display = 'block';
+        });
+        
+        document.getElementById('storyButton').addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            storyScreen.style.display = 'block';
+        });
+        
+        // Botões de voltar
+        document.getElementById('backFromTutorial').addEventListener('click', () => {
+            tutorialScreen.style.display = 'none';
+            mainMenu.style.display = 'block';
+        });
+        
+        document.getElementById('backFromCredits').addEventListener('click', () => {
+            creditsScreen.style.display = 'none';
+            mainMenu.style.display = 'block';
+        });
+        
+        document.getElementById('backFromStory').addEventListener('click', () => {
+            storyScreen.style.display = 'none';
+            mainMenu.style.display = 'block';
+        });
+        
+        // Botão de voltar ao menu durante o jogo
+        document.getElementById('backToMenu').addEventListener('click', () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            gameContainer.style.display = 'none';
+            mainMenu.style.display = 'block';
+            gameRunning = false;
+            
+            // Voltar para música do menu
+            gameMusic.pause();
+            if (musicEnabled) {
+                menuMusic.currentTime = 0;
+                menuMusic.play().catch(e => console.log("Precisa de interação"));
+            }
+        });
+        
+        // ============================================
+        // PARTÍCULAS DO MENU
+        // ============================================
+        
+        const menuCanvas = document.getElementById('menuParticles');
+        const menuCtx = menuCanvas.getContext('2d');
+        menuCanvas.width = window.innerWidth;
+        menuCanvas.height = window.innerHeight;
+        
+        let menuParticles = [];
+        
+        class MenuParticle {
+            constructor() {
+                this.x = Math.random() * menuCanvas.width;
+                this.y = Math.random() * menuCanvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, ${Math.random() * 0.3 + 0.1})`;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > menuCanvas.width) this.x = 0;
+                if (this.x < 0) this.x = menuCanvas.width;
+                if (this.y > menuCanvas.height) this.y = 0;
+                if (this.y < 0) this.y = menuCanvas.height;
+            }
+            
+            draw() {
+                menuCtx.fillStyle = this.color;
+                menuCtx.beginPath();
+                menuCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                menuCtx.fill();
+            }
+        }
+        
+        function initMenuParticles() {
+            menuParticles = [];
+            for (let i = 0; i < 100; i++) {
+                menuParticles.push(new MenuParticle());
+            }
+        }
+        
+        function animateMenuParticles() {
+            menuCtx.clearRect(0, 0, menuCanvas.width, menuCanvas.height);
+            
+            for (let particle of menuParticles) {
+                particle.update();
+                particle.draw();
+            }
+            
+            // Conectar partículas próximas
+            menuCtx.strokeStyle = 'rgba(100, 100, 100, 0.1)';
+            menuCtx.lineWidth = 0.5;
+            
+            for (let i = 0; i < menuParticles.length; i++) {
+                for (let j = i + 1; j < menuParticles.length; j++) {
+                    const dx = menuParticles[i].x - menuParticles[j].x;
+                    const dy = menuParticles[i].y - menuParticles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100) {
+                        menuCtx.beginPath();
+                        menuCtx.moveTo(menuParticles[i].x, menuParticles[i].y);
+                        menuCtx.lineTo(menuParticles[j].x, menuParticles[j].y);
+                        menuCtx.stroke();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animateMenuParticles);
+        }
+        
+        // ============================================
+        // JOGO PRINCIPAL
+        // ============================================
+        
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // VARIÁVEIS DO JOGO
+        let gameRunning = false;
+        let player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 20,
+            height: 40,
+            speed: 3,
+            health: 100,
+            maxHealth: 100,
+            damage: 10,
+            attackCooldown: 0,
+            attackSpeed: 20,
+            attackRange: 50,
+            regenCooldown: 0,
+            regenSpeed: 300,
+            xp: 0,
+            level: 1,
+            xpToNextLevel: 100,
+            skeletons: 0,
+            kills: 0
+        };
+        
+        let gameTime = 0;
+        let particles = [];
+        let enemies = [];
+        let xpOrbs = [];
+        let skeletonFollowers = [];
+        let keys = {};
+        let animationId;
+        let mouseAngle = 0;
+        let swordImage = null;
+        
+        // Carregar imagem da espada
+        const swordImg = document.getElementById('swordImage');
+        swordImg.onload = function() {
+            swordImage = this;
+            console.log("Espada PNG carregada com sucesso!");
+        };
+        swordImg.onerror = function() {
+            console.log("Erro ao carregar espada.png, usando espada padrão");
+            // Criar uma espada padrão se a imagem não carregar
+            swordImage = createDefaultSword();
+        };
+        
+        function createDefaultSword() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 50;
+            canvas.height = 10;
+            const ctx = canvas.getContext('2d');
+            
+            // Gradiente para a espada
+            const gradient = ctx.createLinearGradient(0, 0, 50, 0);
+            gradient.addColorStop(0, '#333');
+            gradient.addColorStop(0.5, '#888');
+            gradient.addColorStop(1, '#333');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 3, 50, 4);
+            
+            // Cabo da espada
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, 10, 10);
+            
+            return canvas;
+        }
+        
+        // Upgrades disponíveis
+        const upgrades = [
+            { name: "Espada Afiada", description: "Aumenta dano em 5", type: "damage", value: 5 },
+            { name: "Botas Leves", description: "Aumenta velocidade em 1", type: "speed", value: 1 },
+            { name: "Vitalidade", description: "Aumenta vida máxima em 25", type: "health", value: 25 },
+            { name: "Regeneração", description: "Reduz tempo de regeneração", type: "regen", value: 50 },
+            { name: "Ataque Rápido", description: "Aumenta velocidade de ataque", type: "attackSpeed", value: 5 },
+            { name: "Esqueleto Aliado", description: "Ganha um esqueleto aliado", type: "skeleton", value: 1 }
+        ];
+        
+        // Inicializar jogo
+        function initGame() {
+            console.log("Iniciando jogo...");
+            
+            player = {
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                width: 20,
+                height: 40,
+                speed: 3,
+                health: 100,
+                maxHealth: 100,
+                damage: 10,
+                attackCooldown: 0,
+                attackSpeed: 20,
+                attackRange: 50,
+                regenCooldown: 0,
+                regenSpeed: 300,
+                xp: 0,
+                level: 1,
+                xpToNextLevel: 100,
+                skeletons: 0,
+                kills: 0
+            };
+            
+            gameTime = 0;
+            particles = [];
+            enemies = [];
+            xpOrbs = [];
+            skeletonFollowers = [];
+            gameRunning = true;
+            
+            // Garantir que o canvas esteja visível
+            canvas.style.display = 'block';
+            
+            // Gerar inimigos iniciais
+            for (let i = 0; i < 10; i++) {
+                spawnEnemy();
+            }
+            
+            updateUI();
+            document.getElementById('upgradeScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            
+            // Parar qualquer animação anterior
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            
+            // Iniciar loop do jogo
+            gameLoop();
+        }
+        
+        // Gerar inimigos
+        function spawnEnemy() {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.max(canvas.width, canvas.height) * 0.7;
+            const x = player.x + Math.cos(angle) * distance;
+            const y = player.y + Math.sin(angle) * distance;
+            
+            // Tipos de inimigos
+            const enemyTypes = [
+                { size: 12, speed: 0.8, health: 15, color: '#666', xpValue: 5 },
+                { size: 18, speed: 0.5, health: 30, color: '#444', xpValue: 10 },
+                { size: 10, speed: 1.2, health: 8, color: '#888', xpValue: 3 }
+            ];
+            
+            const type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            
+            enemies.push({
+                x: x,
+                y: y,
+                size: type.size,
+                speed: type.speed,
+                health: type.health,
+                maxHealth: type.health,
+                color: type.color,
+                xpValue: type.xpValue
+            });
+        }
+        
+        // Desenhar jogador COM ESPADA PNG
+        function drawPlayer() {
+            // Corpo (retângulo preto)
+            ctx.fillStyle = '#000';
+            ctx.fillRect(player.x - player.width/2, player.y - player.height/2, player.width, player.height);
+            
+            // Cabeça (círculo)
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(player.x, player.y - player.height/2 - 5, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // ESPADA PNG - SEGUINDO A DIREÇÃO DO MOUSE
+            if (swordImage) {
+                // Calcular ângulo entre jogador e mouse
+                const mouseXRelative = mouseX - canvas.getBoundingClientRect().left;
+                const mouseYRelative = mouseY - canvas.getBoundingClientRect().top;
+                
+                // Se o mouse não estiver no canvas, usar direção padrão
+                let angle;
+                if (mouseXRelative >= 0 && mouseXRelative <= canvas.width && 
+                    mouseYRelative >= 0 && mouseYRelative <= canvas.height) {
+                    angle = Math.atan2(mouseYRelative - player.y, mouseXRelative - player.x);
+                } else {
+                    // Direção padrão (direita)
+                    angle = 0;
+                }
+                
+                mouseAngle = angle; // Salvar o ângulo para uso no ataque
+                
+                // Salvar o contexto atual
+                ctx.save();
+                
+                // Mover para a posição do jogador
+                ctx.translate(player.x, player.y);
+                
+                // Rotacionar para apontar na direção do mouse
+                ctx.rotate(angle);
+                
+                // Ajustar a posição da espada (fazer a parte de cima seguir o mouse)
+                // A imagem será desenhada com o centro de rotação na base da espada
+                const swordLength = player.attackRange;
+                
+                // Se estiver atacando, dar efeito visual
+                if (player.attackCooldown > player.attackSpeed - 10) {
+                    // Efeito de brilho durante o ataque
+                    ctx.globalAlpha = 0.8;
+                    
+                    // Partículas de ataque na ponta da espada
+                    const tipX = swordLength;
+                    const tipY = 0;
+                    for (let i = 0; i < 3; i++) {
+                        particles.push({
+                            x: player.x + Math.cos(angle) * swordLength,
+                            y: player.y + Math.sin(angle) * swordLength,
+                            size: Math.random() * 3 + 1,
+                            color: '#fff',
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: (Math.random() - 0.5) * 4,
+                            life: 20
+                        });
+                    }
+                }
+                
+                // Desenhar a imagem da espada
+                // A imagem é desenhada com a base (cabo) na origem (0,0)
+                const swordWidth = swordImage.width || 50;
+                const swordHeight = swordImage.height || 10;
+                
+                // Desenhar a espada (a ponta fica à direita)
+                ctx.drawImage(swordImage, 0, -swordHeight/2, swordWidth, swordHeight);
+                
+                // Restaurar o contexto
+                ctx.restore();
+                ctx.globalAlpha = 1.0;
+            } else {
+                // Fallback: desenhar espada simples
+                const swordLength = player.attackRange;
+                const angle = mouseAngle;
+                const swordX = player.x + Math.cos(angle) * swordLength;
+                const swordY = player.y + Math.sin(angle) * swordLength;
+                
+                if (player.attackCooldown > player.attackSpeed - 10) {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 4;
+                } else {
+                    ctx.strokeStyle = '#888';
+                    ctx.lineWidth = 2;
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(player.x, player.y);
+                ctx.lineTo(swordX, swordY);
+                ctx.stroke();
+            }
+            
+            // Sombra
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(player.x, player.y + player.height/2 + 5, player.width/2, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Desenhar inimigos
+        function drawEnemies() {
+            enemies.forEach(enemy => {
+                // Corpo
+                ctx.fillStyle = enemy.color;
+                ctx.beginPath();
+                ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Barra de vida
+                if (enemy.health < enemy.maxHealth) {
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(enemy.x - enemy.size, enemy.y - enemy.size - 8, enemy.size * 2, 3);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(enemy.x - enemy.size, enemy.y - enemy.size - 8, (enemy.health / enemy.maxHealth) * enemy.size * 2, 3);
+                }
+                
+                // Sombra
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(enemy.x, enemy.y + enemy.size/2 + 2, enemy.size/1.5, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        // Desenhar esqueletos aliados
+        function drawSkeletons() {
+            skeletonFollowers.forEach(skeleton => {
+                // Corpo
+                ctx.fillStyle = '#666';
+                ctx.fillRect(skeleton.x - 8, skeleton.y - 15, 16, 30);
+                
+                // Cabeça
+                ctx.fillStyle = '#888';
+                ctx.beginPath();
+                ctx.arc(skeleton.x, skeleton.y - 20, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Arma (apontando para o inimigo mais próximo)
+                let closestEnemy = null;
+                let closestDistance = 100;
+                
+                enemies.forEach(enemy => {
+                    const distance = Math.sqrt(
+                        Math.pow(skeleton.x - enemy.x, 2) + 
+                        Math.pow(skeleton.y - enemy.y, 2)
+                    );
+                    
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestEnemy = enemy;
+                    }
+                });
+                
+                // Ângulo da arma do esqueleto
+                let weaponAngle = Math.PI / 4; // Ângulo padrão
+                if (closestEnemy) {
+                    weaponAngle = Math.atan2(closestEnemy.y - skeleton.y, closestEnemy.x - skeleton.x);
+                }
+                
+                const weaponX = skeleton.x + Math.cos(weaponAngle) * 15;
+                const weaponY = skeleton.y + Math.sin(weaponAngle) * 15;
+                
+                ctx.strokeStyle = '#aaa';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(skeleton.x, skeleton.y);
+                ctx.lineTo(weaponX, weaponY);
+                ctx.stroke();
+                
+                // Sombra
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(skeleton.x, skeleton.y + 15, 10, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        // Desenhar partículas
+        function drawParticles() {
+            particles.forEach((particle, index) => {
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.life--;
+                
+                if (particle.life <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+        
+        // Desenhar orbes de XP
+        function drawXPOrbs() {
+            xpOrbs.forEach(orb => {
+                ctx.fillStyle = '#888';
+                ctx.beginPath();
+                ctx.arc(orb.x, orb.y, orb.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(orb.x, orb.y, orb.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        // Atualizar lógica do jogo
+        function update() {
+            if (!gameRunning) return;
+            
+            gameTime += 1/60;
+            document.getElementById('time').textContent = Math.floor(gameTime);
+            
+            let moveX = 0;
+            let moveY = 0;
+            
+            if (keys['ArrowLeft'] || keys['a']) moveX = -1;
+            if (keys['ArrowRight'] || keys['d']) moveX = 1;
+            if (keys['ArrowUp'] || keys['w']) moveY = -1;
+            if (keys['ArrowDown'] || keys['s']) moveY = 1;
+            
+            // Normalizar movimento diagonal
+            if (moveX !== 0 && moveY !== 0) {
+                moveX *= 0.707;
+                moveY *= 0.707;
+            }
+            
+            player.x += moveX * player.speed;
+            player.y += moveY * player.speed;
+            
+            // Limitar jogador aos limites do canvas
+            const margin = 50;
+            player.x = Math.max(margin, Math.min(canvas.width - margin, player.x));
+            player.y = Math.max(margin, Math.min(canvas.height - margin, player.y));
+            
+            // Partículas de movimento
+            if ((moveX !== 0 || moveY !== 0) && Math.random() < 0.3) {
+                particles.push({
+                    x: player.x - moveX * 10,
+                    y: player.y - moveY * 10,
+                    size: Math.random() * 2 + 1,
+                    color: '#666',
+                    vx: -moveX * 2 + (Math.random() - 0.5),
+                    vy: -moveY * 2 + (Math.random() - 0.5),
+                    life: 15
+                });
+            }
+            
+            // Cooldown de ataque
+            if (player.attackCooldown > 0) {
+                player.attackCooldown--;
+            }
+            
+            // Ataque automático (agora na direção da espada/mouse)
+            if (player.attackCooldown === 0) {
+                let attacked = false;
+                
+                enemies.forEach((enemy, index) => {
+                    const distance = Math.sqrt(
+                        Math.pow(player.x - enemy.x, 2) + 
+                        Math.pow(player.y - enemy.y, 2)
+                    );
+                    
+                    // Verificar se o inimigo está dentro do alcance e na direção da espada
+                    if (distance < player.attackRange) {
+                        // Calcular ângulo entre jogador e inimigo
+                        const angleToEnemy = Math.atan2(enemy.y - player.y, enemy.x - player.x);
+                        
+                        // Verificar se o inimigo está dentro do arco de ataque (45 graus de cada lado da espada)
+                        const angleDiff = Math.abs(mouseAngle - angleToEnemy);
+                        const normalizedAngleDiff = Math.min(
+                            Math.abs(angleDiff),
+                            Math.abs(angleDiff - Math.PI * 2)
+                        );
+                        
+                        if (normalizedAngleDiff < Math.PI / 4) { // 45 graus
+                            enemy.health -= player.damage;
+                            player.attackCooldown = player.attackSpeed;
+                            attacked = true;
+                            
+                            // Partículas de dano
+                            for (let i = 0; i < 5; i++) {
+                                particles.push({
+                                    x: enemy.x,
+                                    y: enemy.y,
+                                    size: Math.random() * 2 + 1,
+                                    color: '#fff',
+                                    vx: (Math.random() - 0.5) * 3,
+                                    vy: (Math.random() - 0.5) * 3,
+                                    life: 15
+                                });
+                            }
+                            
+                            // Inimigo morto
+                            if (enemy.health <= 0) {
+                                // Chance de dropar XP
+                                if (Math.random() < 0.7) {
+                                    xpOrbs.push({
+                                        x: enemy.x,
+                                        y: enemy.y,
+                                        size: 6,
+                                        value: enemy.xpValue
+                                    });
+                                }
+                                
+                                enemies.splice(index, 1);
+                                player.kills++;
+                                spawnEnemy(); // Respawn um novo inimigo
+                            }
+                        }
+                    }
+                });
+                
+                // Se atacou, também atacar com esqueletos
+                if (attacked && skeletonFollowers.length > 0) {
+                    skeletonFollowers.forEach(skeleton => {
+                        let closestEnemy = null;
+                        let closestDistance = 50; // Alcance dos esqueletos
+                        
+                        enemies.forEach(enemy => {
+                            const distance = Math.sqrt(
+                                Math.pow(skeleton.x - enemy.x, 2) + 
+                                Math.pow(skeleton.y - enemy.y, 2)
+                            );
+                            
+                            if (distance < closestDistance) {
+                                closestDistance = distance;
+                                closestEnemy = enemy;
+                            }
+                        });
+                        
+                        if (closestEnemy) {
+                            closestEnemy.health -= 5; // Dano do esqueleto
+                            
+                            // Partículas do ataque do esqueleto
+                            for (let i = 0; i < 3; i++) {
+                                particles.push({
+                                    x: closestEnemy.x,
+                                    y: closestEnemy.y,
+                                    size: Math.random() * 2 + 1,
+                                    color: '#666',
+                                    vx: (Math.random() - 0.5) * 2,
+                                    vy: (Math.random() - 0.5) * 2,
+                                    life: 15
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+            
+            // Atualizar inimigos
+            enemies.forEach(enemy => {
+                // Mover em direção ao jogador
+                const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                enemy.x += Math.cos(angle) * enemy.speed;
+                enemy.y += Math.sin(angle) * enemy.speed;
+                
+                // Colisão com jogador
+                const distance = Math.sqrt(
+                    Math.pow(player.x - enemy.x, 2) + 
+                    Math.pow(player.y - enemy.y, 2)
+                );
+                
+                if (distance < (player.width/2 + enemy.size)) {
+                    player.health -= 0.5; // Dano por frame de contato
+                    
+                    // Partículas de dano no jogador
+                    if (Math.random() < 0.2) {
+                        particles.push({
+                            x: player.x + (Math.random() - 0.5) * player.width,
+                            y: player.y + (Math.random() - 0.5) * player.height,
+                            size: Math.random() * 3 + 1,
+                            color: '#fff',
+                            vx: (Math.random() - 0.5) * 3,
+                            vy: (Math.random() - 0.5) * 3,
+                            life: 10
+                        });
+                    }
+                }
+            });
+            
+            // Atualizar esqueletos
+            skeletonFollowers.forEach((skeleton, index) => {
+                // Seguir o jogador, mas manter uma distância
+                const angle = Math.atan2(player.y - skeleton.y, player.x - skeleton.x);
+                const distanceToPlayer = Math.sqrt(
+                    Math.pow(player.x - skeleton.x, 2) + 
+                    Math.pow(player.y - skeleton.y, 2)
+                );
+                
+                const followDistance = 60 + index * 20; // Esqueletos se espalham
+                
+                if (distanceToPlayer > followDistance) {
+                    skeleton.x += Math.cos(angle) * 2;
+                    skeleton.y += Math.sin(angle) * 2;
+                }
+                
+                // Movimento flutuante
+                skeleton.x += Math.sin(gameTime * 2 + index) * 0.5;
+                skeleton.y += Math.cos(gameTime * 2 + index) * 0.5;
+            });
+            
+            // Atualizar orbes de XP
+            xpOrbs.forEach((orb, index) => {
+                // Mover em direção ao jogador quando perto
+                const distance = Math.sqrt(
+                    Math.pow(player.x - orb.x, 2) + 
+                    Math.pow(player.y - orb.y, 2)
+                );
+                
+                if (distance < 100) {
+                    const angle = Math.atan2(player.y - orb.y, player.x - orb.x);
+                    const speed = 5 - (distance / 100) * 4; // Mais rápido quanto mais perto
+                    orb.x += Math.cos(angle) * speed;
+                    orb.y += Math.sin(angle) * speed;
+                }
+                
+                // Coletar orbe
+                if (distance < 20) {
+                    player.xp += orb.value;
+                    xpOrbs.splice(index, 1);
+                    
+                    // Partículas de coleta
+                    for (let i = 0; i < 8; i++) {
+                        particles.push({
+                            x: player.x,
+                            y: player.y,
+                            size: Math.random() * 2 + 1,
+                            color: '#888',
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: (Math.random() - 0.5) * 4,
+                            life: 20
+                        });
+                    }
+                    
+                    // Verificar level up
+                    if (player.xp >= player.xpToNextLevel) {
+                        levelUp();
+                    }
+                    
+                    updateUI();
+                }
+            });
+            
+            // Regeneração de vida
+            if (player.regenCooldown > 0) {
+                player.regenCooldown--;
+            } else {
+                if (player.health < player.maxHealth) {
+                    player.health = Math.min(player.maxHealth, player.health + 0.1);
+                    player.regenCooldown = player.regenSpeed;
+                    updateUI();
+                }
+            }
+            
+            // Spawn de inimigos ao longo do tempo
+            if (Math.random() < 0.02) {
+                spawnEnemy();
+            }
+            
+            // Game over
+            if (player.health <= 0) {
+                gameOver();
+            }
+            
+            updateUI();
+        }
+        
+        // Level up do jogador
+        function levelUp() {
+            player.level++;
+            player.xp -= player.xpToNextLevel;
+            player.xpToNextLevel = Math.floor(player.xpToNextLevel * 1.5);
+            
+            // Mostrar tela de upgrade
+            showUpgradeScreen();
+        }
+        
+        // Mostrar tela de upgrade
+        function showUpgradeScreen() {
+            gameRunning = false;
+            const upgradeScreen = document.getElementById('upgradeScreen');
+            const optionsContainer = document.getElementById('upgradeOptions');
+            optionsContainer.innerHTML = '';
+            
+            // Escolher 3 upgrades aleatórios
+            const shuffledUpgrades = [...upgrades].sort(() => Math.random() - 0.5);
+            const selectedUpgrades = shuffledUpgrades.slice(0, 3);
+            
+            // Adicionar opções
+            selectedUpgrades.forEach(upgrade => {
+                const option = document.createElement('div');
+                option.className = 'upgradeOption';
+                option.innerHTML = `
+                    <h3>${upgrade.name}</h3>
+                    <p>${upgrade.description}</p>
+                `;
+                
+                option.addEventListener('click', () => {
+                    applyUpgrade(upgrade);
+                    upgradeScreen.style.display = 'none';
+                    gameRunning = true;
+                    gameLoop();
+                });
+                
+                optionsContainer.appendChild(option);
+            });
+            
+            upgradeScreen.style.display = 'block';
+        }
+        
+        // Aplicar upgrade escolhido
+        function applyUpgrade(upgrade) {
+            switch(upgrade.type) {
+                case 'damage':
+                    player.damage += upgrade.value;
+                    break;
+                case 'speed':
+                    player.speed += upgrade.value;
+                    break;
+                case 'health':
+                    player.maxHealth += upgrade.value;
+                    player.health += upgrade.value;
+                    break;
+                case 'regen':
+                    player.regenSpeed = Math.max(50, player.regenSpeed - upgrade.value);
+                    break;
+                case 'attackSpeed':
+                    player.attackSpeed = Math.max(5, player.attackSpeed - upgrade.value);
+                    break;
+                case 'skeleton':
+                    player.skeletons += upgrade.value;
+                    // Adicionar novo esqueleto
+                    skeletonFollowers.push({
+                        x: player.x + (Math.random() - 0.5) * 100,
+                        y: player.y + (Math.random() - 0.5) * 100
+                    });
+                    break;
+            }
+            
+            updateUI();
+        }
+        
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            const gameOverScreen = document.getElementById('gameOverScreen');
+            document.getElementById('finalTime').textContent = Math.floor(gameTime);
+            document.getElementById('finalKills').textContent = player.kills;
+            document.getElementById('finalLevel').textContent = player.level;
+            gameOverScreen.style.display = 'block';
+            
+            // Botão de jogar novamente
+            document.getElementById('restartButton').addEventListener('click', () => {
+                gameOverScreen.style.display = 'none';
+                initGame();
+            }, { once: true });
+            
+            // Botão de voltar ao menu
+            document.getElementById('menuButton').addEventListener('click', () => {
+                gameOverScreen.style.display = 'none';
+                gameContainer.style.display = 'none';
+                mainMenu.style.display = 'block';
+                
+                // Voltar para música do menu
+                gameMusic.pause();
+                if (musicEnabled) {
+                    menuMusic.currentTime = 0;
+                    menuMusic.play().catch(e => console.log("Precisa de interação"));
+                }
+            }, { once: true });
+        }
+        
+        // Atualizar interface do usuário
+        function updateUI() {
+            document.getElementById('healthText').textContent = `${Math.floor(player.health)}/${player.maxHealth}`;
+            document.getElementById('healthFill').style.width = `${(player.health / player.maxHealth) * 100}%`;
+            document.getElementById('xp').textContent = player.xp;
+            document.getElementById('level').textContent = player.level;
+            document.getElementById('expFill').style.width = `${(player.xp / player.xpToNextLevel) * 100}%`;
+            document.getElementById('kills').textContent = player.kills;
+            document.getElementById('skeletons').textContent = player.skeletons;
+        }
+        
+        // Loop principal do jogo
+        function gameLoop() {
+            // Limpar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Desenhar fundo com grid sutil
+            drawBackground();
+            
+            // Desenhar elementos do jogo
+            drawXPOrbs();
+            drawParticles();
+            drawSkeletons();
+            drawEnemies();
+            drawPlayer(); // Desenhar jogador POR ÚLTIMO para ficar na frente
+            
+            // Atualizar lógica do jogo
+            update();
+            
+            // Continuar o loop se o jogo estiver rodando
+            if (gameRunning) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+        
+        // Desenhar fundo com grid
+        function drawBackground() {
+            // Fundo escuro
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid sutil
+            ctx.strokeStyle = 'rgba(50, 50, 50, 0.3)';
+            ctx.lineWidth = 1;
+            
+            const gridSize = 50;
+            
+            // Linhas verticais
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // Linhas horizontais
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+        
+        // Controles de teclado
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            
+            // Permitir que espaço inicie a música se autoplay foi bloqueado
+            if (e.key === ' ' && musicEnabled && menuMusic.paused) {
+                menuMusic.play().catch(e => console.log("Ainda bloqueado"));
+            }
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        // Controle do mouse para a espada
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        // Focar no canvas para capturar teclas e permitir autoplay
+        canvas.addEventListener('click', () => {
+            canvas.focus();
+            // Tentar tocar música se ainda não está tocando
+            if (musicEnabled && menuMusic.paused && mainMenu.style.display !== 'none') {
+                menuMusic.play().catch(e => console.log("Clique não resolveu autoplay"));
+            }
+        });
+        
+        // Tentar autoplay ao clicar em qualquer lugar do documento
+        document.addEventListener('click', () => {
+            if (musicEnabled && menuMusic.paused && mainMenu.style.display !== 'none') {
+                menuMusic.play().catch(e => console.log("Autoplay requer interação mais direta"));
+            }
+        }, { once: true });
+        
+        // Redimensionar partículas do menu
+        window.addEventListener('resize', () => {
+            menuCanvas.width = window.innerWidth;
+            menuCanvas.height = window.innerHeight;
+        });
+        
+        // Inicializar partículas do menu
+        initMenuParticles();
+        animateMenuParticles();
+        
+        // Tentar iniciar música após um pequeno delay
+        setTimeout(() => {
+            if (musicEnabled && menuMusic.paused) {
+                menuMusic.play().catch(e => {
+                    console.log("Autoplay inicial bloqueado, aguardando interação do usuário");
+                });
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
